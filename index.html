@@ -1,252 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartCrop AI — Smarter Crop Decisions</title>
-  <meta name="description" content="SmartCrop AI analyzes soil and climate conditions to recommend suitable crop classes using machine learning.">
-  <style>
-    :root{
-      --bg:#06100c;
-      --bg2:#091610;
-      --panel:rgba(16,31,24,.72);
-      --panel2:rgba(18,38,29,.55);
-      --line:rgba(135,255,183,.14);
-      --text:#f1f7f2;
-      --muted:#9caea3;
-      --green:#4ee486;
-      --green2:#1fbd68;
-      --cyan:#8ff1ca;
-      --max:1160px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:
-        radial-gradient(circle at 18% 10%, rgba(48,219,125,.13), transparent 28%),
-        radial-gradient(circle at 82% 18%, rgba(65,167,124,.09), transparent 24%),
-        linear-gradient(180deg,var(--bg),#050b08 70%);
-      color:var(--text);
-      min-height:100vh;
-    }
-    a{text-decoration:none;color:inherit}
-    .wrap{max-width:var(--max);margin:auto;padding:0 28px}
-    nav{
-      height:76px;display:flex;align-items:center;justify-content:space-between;
-      border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;
-      backdrop-filter:blur(18px);background:rgba(6,16,12,.7);
-    }
-    .brand{font-weight:800;letter-spacing:-.04em;font-size:22px}
-    .brand span{color:var(--green)}
-    .navlinks{display:flex;gap:28px;color:var(--muted);font-size:14px}
-    .navlinks a:hover{color:var(--text)}
-    .navcta,.ghost,.primary{
-      border:1px solid var(--line);padding:12px 17px;border-radius:12px;font-weight:700;
-      transition:.2s ease;display:inline-flex;align-items:center;gap:8px;
-    }
-    .navcta,.primary{background:var(--green);color:#05210f;border-color:transparent}
-    .navcta:hover,.primary:hover{transform:translateY(-2px);background:#69ed9b}
-    .hero{padding:92px 0 72px;display:grid;grid-template-columns:1.08fr .92fr;gap:54px;align-items:center}
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(78,228,134,.22);
-      color:var(--cyan);padding:8px 12px;border-radius:999px;background:rgba(52,137,91,.1);
-      font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
-    }
-    h1{font-size:clamp(52px,7vw,92px);line-height:.93;letter-spacing:-.065em;margin:22px 0}
-    h1 .accent{color:var(--green)}
-    .lead{font-size:18px;line-height:1.7;color:var(--muted);max-width:690px}
-    .actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
-    .ghost{color:var(--text);background:rgba(255,255,255,.025)}
-    .ghost:hover{background:rgba(255,255,255,.05);transform:translateY(-2px)}
-    .hero-card{
-      position:relative;border:1px solid var(--line);border-radius:28px;padding:24px;
-      background:linear-gradient(180deg,rgba(15,39,26,.92),rgba(7,20,13,.92));
-      box-shadow:0 30px 80px rgba(0,0,0,.32);overflow:hidden;
-    }
-    .hero-card:before{
-      content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-90px;top:-110px;
-      background:rgba(78,228,134,.1);filter:blur(10px)
-    }
-    .mini-title{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
-    .crop{font-size:44px;font-weight:800;letter-spacing:-.04em;margin-top:14px}
-    .score{color:var(--green);font-weight:800;font-size:15px;margin-top:5px}
-    .bars{margin-top:25px;display:grid;gap:13px}
-    .barrow{display:grid;grid-template-columns:96px 1fr 50px;gap:10px;align-items:center;font-size:13px}
-    .barbg{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
-    .barfill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:999px}
-    section{padding:72px 0}
-    .section-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:30px}
-    .section-head h2{margin:0;font-size:38px;letter-spacing:-.045em}
-    .section-head p{margin:0;color:var(--muted);max-width:520px;line-height:1.6}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .card{
-      border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:22px;
-    }
-    .num{font-size:12px;color:var(--green);font-weight:800;letter-spacing:.12em}
-    .card h3{margin:12px 0 8px;font-size:20px}
-    .card p{margin:0;color:var(--muted);line-height:1.65;font-size:14px}
-    .inputs{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
-    .input{
-      border:1px solid var(--line);background:var(--panel2);border-radius:14px;padding:16px 10px;
-      text-align:center;font-size:12px;color:var(--muted)
-    }
-    .input strong{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
-    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:stretch}
-    .flow .card{position:relative}
-    .flow .card:not(:last-child):after{
-      content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);
-      color:var(--green);font-size:20px;z-index:3;
-    }
-    .cta{
-      border:1px solid rgba(78,228,134,.22);border-radius:28px;padding:42px;
-      background:linear-gradient(120deg,rgba(31,126,72,.18),rgba(15,36,24,.55));
-      display:flex;align-items:center;justify-content:space-between;gap:28px;
-    }
-    .cta h2{margin:0 0 10px;font-size:42px;letter-spacing:-.05em}
-    .cta p{margin:0;color:var(--muted);line-height:1.6;max-width:650px}
-    footer{padding:32px 0 50px;color:#728278;font-size:13px;border-top:1px solid var(--line)}
-    @media(max-width:900px){
-      .navlinks{display:none}
-      .hero{grid-template-columns:1fr}
-      .grid3{grid-template-columns:1fr}
-      .inputs{grid-template-columns:repeat(4,1fr)}
-      .flow{grid-template-columns:1fr 1fr}
-      .flow .card:after{display:none}
-      .cta{flex-direction:column;align-items:flex-start}
-    }
-    @media(max-width:540px){
-      .wrap{padding:0 18px}
-      nav{height:68px}
-      .navcta{padding:10px 12px}
-      .hero{padding:65px 0 48px}
-      h1{font-size:56px}
-      .inputs{grid-template-columns:repeat(2,1fr)}
-      .flow{grid-template-columns:1fr}
-      .cta{padding:28px}
-      .cta h2{font-size:32px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartCrop AI · Alpha Z</title>
+<meta name="description" content="SmartCrop AI — AI/ML crop decision-support prototype by Team Alpha Z.">
+<style>
+:root{--bg:#06100c;--bg2:#091610;--panel:#0d1913;--line:rgba(132,239,169,.14);--text:#edf7ef;--muted:#99aba0;--green:#68e58a;--green2:#baf4c9;--cyan:#8de7d5;--max:1180px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 15% 0,rgba(52,214,116,.12),transparent 29%),radial-gradient(circle at 90% 8%,rgba(68,205,182,.08),transparent 25%),linear-gradient(180deg,var(--bg),#050a08 75%)}
+a{text-decoration:none;color:inherit}.wrap{max-width:var(--max);margin:auto;padding:0 26px}
+nav{position:sticky;top:0;z-index:20;height:74px;border-bottom:1px solid var(--line);background:rgba(6,16,12,.76);backdrop-filter:blur(18px)}nav .navin{height:100%;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;font-size:21px;letter-spacing:-.04em}.brand span{color:var(--green)}.navlinks{display:flex;gap:25px;color:var(--muted);font-size:14px}.navlinks a:hover{color:var(--text)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-weight:850;border:1px solid var(--line);transition:.18s ease}.btn.primary{background:var(--green);color:#06120a;border-color:transparent}.btn.primary:hover{transform:translateY(-2px);background:#7aee98}.btn.ghost{background:rgba(255,255,255,.025)}.btn.ghost:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+.hero{display:grid;grid-template-columns:1.04fr .96fr;gap:58px;align-items:center;padding:95px 0 75px}.eyebrow{display:inline-flex;padding:8px 12px;border:1px solid #29543a;border-radius:999px;background:#0a1710;color:var(--green2);font-size:11px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.hero h1{font-size:clamp(54px,7vw,92px);line-height:.92;letter-spacing:-.065em;margin:22px 0}.hero h1 span{color:var(--green)}.hero p{color:var(--muted);line-height:1.75;font-size:18px;max-width:690px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.hero-card{border:1px solid var(--line);border-radius:28px;padding:24px;background:linear-gradient(150deg,#10271a,#0c1712 62%,#0e201b);box-shadow:0 28px 70px rgba(0,0,0,.3)}.mini{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em}.crop{font-size:45px;font-weight:900;letter-spacing:-.05em;margin-top:15px}.score{color:var(--green2);font-weight:800;margin-top:4px}.bars{margin-top:24px;display:grid;gap:13px}.bar{display:grid;grid-template-columns:110px 1fr 44px;gap:10px;align-items:center;font-size:13px}.track{height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#48bf71,#78eb9b)}
+section{padding:72px 0}.head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:28px}.head h2{margin:0;font-size:38px;letter-spacing:-.05em}.head p{margin:0;max-width:560px;color:var(--muted);line-height:1.65}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{border:1px solid var(--line);border-radius:19px;background:rgba(13,25,19,.78);padding:21px}.n{font-size:11px;color:var(--green);font-weight:850;letter-spacing:.11em}.card h3{font-size:20px;margin:12px 0 7px}.card p{color:var(--muted);line-height:1.6;font-size:14px;margin:0}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.flow .card{position:relative}.flow .card:not(:last-child):after{content:'→';position:absolute;right:-13px;top:50%;color:var(--green);font-size:20px}.signals{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}.signal{padding:15px 9px;text-align:center;border:1px solid var(--line);border-radius:14px;background:rgba(13,25,19,.78);color:var(--muted);font-size:12px}.signal strong{display:block;color:var(--text);font-size:15px;margin-bottom:4px}.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.feature{padding:19px;border:1px solid var(--line);border-radius:17px;background:rgba(13,25,19,.72)}.feature h3{margin:10px 0 7px}.feature p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.sim{border:1px solid #2c5d40;border-radius:25px;padding:30px;background:linear-gradient(135deg,rgba(28,106,58,.16),rgba(10,24,16,.8));display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.sim h3{font-size:34px;margin:0 0 9px;letter-spacing:-.05em}.sim p{margin:0;color:var(--muted);line-height:1.65}.sim-ui{border:1px solid var(--line);border-radius:18px;padding:18px;background:#09120e}.slider{display:grid;grid-template-columns:92px 1fr 45px;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin:13px 0}.slider span{height:7px;border-radius:999px;background:linear-gradient(90deg,#4abb70,#7ce998);position:relative}.slider span:after{content:'';position:absolute;right:17%;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:#eaffee;border:2px solid #49bc70}.cta{padding:40px;border:1px solid rgba(105,229,138,.21);border-radius:25px;background:linear-gradient(120deg,rgba(42,125,73,.16),rgba(12,27,19,.84));display:flex;justify-content:space-between;align-items:center;gap:25px}.cta h2{font-size:42px;letter-spacing:-.055em;margin:0 0 9px}.cta p{margin:0;color:var(--muted);max-width:670px;line-height:1.6}.team{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.member{border:1px solid var(--line);border-radius:17px;background:rgba(13,25,19,.78);padding:18px}.member strong{display:block;font-size:16px}.member span{display:block;margin-top:6px;color:var(--green2);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.member p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.5}footer{padding:32px 0 48px;color:#74857b;border-top:1px solid var(--line);font-size:12px}
+@media(max-width:920px){.navlinks{display:none}.hero{grid-template-columns:1fr}.signals{grid-template-columns:repeat(4,1fr)}.flow{grid-template-columns:1fr 1fr}.flow .card:after{display:none}.feature-grid{grid-template-columns:1fr 1fr}.sim{grid-template-columns:1fr}.team{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}}
+@media(max-width:540px){.wrap{padding:0 18px}.hero{padding:68px 0 52px}.hero h1{font-size:55px}.signals{grid-template-columns:repeat(2,1fr)}.flow,.feature-grid,.team{grid-template-columns:1fr}.cta{padding:27px;align-items:flex-start;flex-direction:column}.cta h2{font-size:32px}}
+</style>
 </head>
 <body>
-  <nav>
-    <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%">
-      <a href="#" class="brand">SmartCrop <span>AI</span></a>
-      <div class="navlinks">
-        <a href="#problem">Problem</a>
-        <a href="#how">How it works</a>
-        <a href="#inputs">Inputs</a>
-        <a href="#model">Model</a>
-      </div>
-      <a class="navcta" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/" target="_self">Launch app →</a>
-    </div>
-  </nav>
-
-  <main>
-    <section class="hero wrap">
-      <div>
-        <div class="eyebrow">🌱 AI · SOIL · CLIMATE · DECISION SUPPORT</div>
-        <h1>Smarter Crop<br><span class="accent">Decisions.</span></h1>
-        <p class="lead">
-          SmartCrop AI analyzes soil and climate conditions and recommends suitable crop classes using a trained machine-learning model.
-          Designed as a farmer-friendly decision-support prototype.
-        </p>
-        <div class="actions">
-          <a class="primary" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/" target="_self">Try SmartCrop AI →</a>
-          <a class="ghost" href="#how">See how it works</a>
-        </div>
-      </div>
-
-      <div class="hero-card">
-        <div class="mini-title">Sample recommendation</div>
-        <div class="crop">🌾 Rice</div>
-        <div class="score">Model score · 94.2%</div>
-        <div class="bars">
-          <div class="barrow"><span>Nitrogen</span><div class="barbg"><div class="barfill" style="width:82%"></div></div><b>82</b></div>
-          <div class="barrow"><span>Rainfall</span><div class="barbg"><div class="barfill" style="width:76%"></div></div><b>76</b></div>
-          <div class="barrow"><span>Humidity</span><div class="barbg"><div class="barfill" style="width:88%"></div></div><b>88</b></div>
-          <div class="barrow"><span>pH</span><div class="barbg"><div class="barfill" style="width:79%"></div></div><b>79</b></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="problem">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>The problem</h2>
-          <p>Crop selection depends on multiple soil and climate factors. Interpreting these factors together can be difficult without a simple decision-support layer.</p>
-        </div>
-        <div class="grid3">
-          <div class="card"><div class="num">01</div><h3>Too many variables</h3><p>Nutrients, rainfall, temperature, humidity and pH all influence crop suitability.</p></div>
-          <div class="card"><div class="num">02</div><h3>Hard to compare</h3><p>Manual interpretation makes it difficult to quickly compare several crop classes.</p></div>
-          <div class="card"><div class="num">03</div><h3>Need simple outputs</h3><p>A useful prototype should turn raw measurements into a clear, understandable recommendation.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="how">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>How it works</h2>
-          <p>One simple flow from field measurements to a machine-learning recommendation.</p>
-        </div>
-        <div class="flow">
-          <div class="card"><div class="num">01 · INPUT</div><h3>Farmer data</h3><p>Enter soil and climate values from a test or current observations.</p></div>
-          <div class="card"><div class="num">02 · ANALYZE</div><h3>ML model</h3><p>A Random Forest classifier evaluates the seven parameters together.</p></div>
-          <div class="card"><div class="num">03 · RECOMMEND</div><h3>Crop classes</h3><p>The model returns a ranked set of suitable crop classes.</p></div>
-          <div class="card"><div class="num">04 · EXPLAIN</div><h3>Understand</h3><p>Present the result in a farmer-friendly format rather than raw model output.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="inputs">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>Seven input signals</h2>
-          <p>The current MVP uses these soil and climate parameters as the model inputs.</p>
-        </div>
-        <div class="inputs">
-          <div class="input"><strong>N</strong>Nitrogen</div>
-          <div class="input"><strong>P</strong>Phosphorus</div>
-          <div class="input"><strong>K</strong>Potassium</div>
-          <div class="input"><strong>°C</strong>Temperature</div>
-          <div class="input"><strong>%</strong>Humidity</div>
-          <div class="input"><strong>pH</strong>Soil pH</div>
-          <div class="input"><strong>mm</strong>Rainfall</div>
-        </div>
-      </div>
-    </section>
-
-    <section id="model">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>Built for a fast, testable MVP</h2>
-          <p>The prototype focuses on a complete working loop rather than a large feature set.</p>
-        </div>
-        <div class="grid3">
-          <div class="card"><div class="num">MODEL</div><h3>Random Forest</h3><p>Supervised machine learning model for crop-class prediction.</p></div>
-          <div class="card"><div class="num">OUTPUT</div><h3>Recommendation + alternatives</h3><p>Show the primary recommendation and additional model outputs for comparison.</p></div>
-          <div class="card"><div class="num">SCOPE</div><h3>Decision support</h3><p>Designed as a prototype that can later integrate local weather, soil testing and market context.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="wrap">
-        <div class="cta">
-          <div>
-            <h2>Ready to test SmartCrop AI?</h2>
-            <p>Open the working MVP and enter soil and climate values to see the model's crop recommendation.</p>
-          </div>
-          <a class="primary" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/" target="_self">Launch SmartCrop AI →</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap">SmartCrop AI · AI-based crop recommendation prototype · Built for IDEAFORGE 2.0</div>
-  </footer>
+<nav><div class="wrap navin"><a href="#" class="brand">SmartCrop <span>AI</span></a><div class="navlinks"><a href="#problem">Problem</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#team">Team</a></div><a class="btn primary" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/">Launch app →</a></div></nav>
+<main>
+<section class="hero wrap"><div><div class="eyebrow">🌱 AI · SOIL · CLIMATE · ALPHA Z</div><h1>Smarter Crop<br><span>Decisions.</span></h1><p>SmartCrop AI turns soil and climate measurements into a clear crop recommendation using a machine-learning model — then lets users understand and explore the decision.</p><div class="actions"><a class="btn primary" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/">Try SmartCrop AI →</a><a class="btn ghost" href="#how">See how it works</a></div></div><div class="hero-card"><div class="mini">Sample result</div><div class="crop">🌾 Rice</div><div class="score">Model score · 94.2%</div><div class="bars"><div class="bar"><span>Nitrogen</span><i class="track"><b class="fill" style="width:82%"></b></i><strong>82</strong></div><div class="bar"><span>Humidity</span><i class="track"><b class="fill" style="width:88%"></b></i><strong>88</strong></div><div class="bar"><span>Rainfall</span><i class="track"><b class="fill" style="width:76%"></b></i><strong>76</strong></div><div class="bar"><span>Soil pH</span><i class="track"><b class="fill" style="width:79%"></b></i><strong>79</strong></div></div></div></section>
+<section id="problem"><div class="wrap"><div class="head"><h2>The problem</h2><p>Crop selection depends on multiple field conditions. SmartCrop AI brings those measurements into one simple decision-support flow.</p></div><div class="grid3"><div class="card"><div class="n">01</div><h3>Many variables</h3><p>Nutrients, rainfall, temperature, humidity and pH all appear together in crop-selection data.</p></div><div class="card"><div class="n">02</div><h3>Hard to compare</h3><p>Raw measurements are difficult to translate quickly into several possible crop choices.</p></div><div class="card"><div class="n">03</div><h3>Need clear output</h3><p>Farmers and demonstrators need a result they can understand, compare and explore.</p></div></div></div></section>
+<section id="how"><div class="wrap"><div class="head"><h2>How it works</h2><p>One complete loop from field data to an explainable recommendation.</p></div><div class="flow"><div class="card"><div class="n">01 · INPUT</div><h3>Field data</h3><p>Enter N, P, K, temperature, humidity, pH and rainfall.</p></div><div class="card"><div class="n">02 · ANALYZE</div><h3>ML model</h3><p>Random Forest evaluates the seven parameters together.</p></div><div class="card"><div class="n">03 · RECOMMEND</div><h3>Crop ranking</h3><p>Return the leading crop classes with model scores.</p></div><div class="card"><div class="n">04 · EXPLORE</div><h3>Understand & test</h3><p>Compare crops, inspect the reasoning and run what-if scenarios.</p></div></div></div></section>
+<section><div class="wrap"><div class="head"><h2>Seven input signals</h2><p>The current model receives these soil and climate parameters.</p></div><div class="signals"><div class="signal"><strong>N</strong>Nitrogen</div><div class="signal"><strong>P</strong>Phosphorus</div><div class="signal"><strong>K</strong>Potassium</div><div class="signal"><strong>°C</strong>Temperature</div><div class="signal"><strong>%</strong>Humidity</div><div class="signal"><strong>pH</strong>Soil pH</div><div class="signal"><strong>mm</strong>Rainfall</div></div></div></section>
+<section id="features"><div class="wrap"><div class="head"><h2>Built around useful intelligence</h2><p>A focused MVP: not dozens of screens, just features that make the prediction useful and demonstrable.</p></div><div class="feature-grid"><div class="feature"><div class="n">01</div><h3>Smart recommendation</h3><p>Get the leading crop recommendation from the trained ML model.</p></div><div class="feature"><div class="n">02</div><h3>Why this crop?</h3><p>See benchmark-based context behind the model's recommendation.</p></div><div class="feature"><div class="n">03</div><h3>Top 6 + compare</h3><p>Explore the strongest alternatives instead of seeing one opaque answer.</p></div><div class="feature"><div class="n">04</div><h3>What-if simulator</h3><p>Change field conditions and see how the model output responds.</p></div><div class="feature"><div class="n">05</div><h3>Crop explorer</h3><p>Browse a broader crop library for context beyond the model-backed classes.</p></div><div class="feature"><div class="n">06</div><h3>Benchmark check</h3><p>Know whether your inputs sit inside the model's observed ranges.</p></div><div class="feature"><div class="n">07</div><h3>Farmer report</h3><p>Download the current recommendation and inputs as a simple report.</p></div><div class="feature"><div class="n">08</div><h3>Optional AI explanation</h3><p>Gemini can translate the model output into simple farmer-friendly language.</p></div></div></div></section>
+<section><div class="wrap"><div class="sim"><div><div class="n">THE DIFFERENTIATOR</div><h3>What if the field changes?</h3><p>Adjust rainfall, pH, temperature, humidity or nutrients and rerun the model. The prototype makes the recommendation interactive rather than static.</p></div><div class="sim-ui"><div class="slider"><span>Rainfall</span><span></span><b>200</b></div><div class="slider"><span>Soil pH</span><span></span><b>6.5</b></div><div class="slider"><span>Humidity</span><span></span><b>80%</b></div><div style="margin-top:18px;padding:14px;border-radius:13px;background:#0c1f14;border:1px solid #245238;color:#baf4c9;font-weight:850">🌾 Rice → recalculate → compare</div></div></div></div></section>
+<section id="team"><div class="wrap"><div class="head"><h2>Team Alpha Z</h2><p>IDEAFORGE 2.0 · AI Technology & Digital Innovation</p></div><div class="team"><div class="member"><strong>Harshit Singh</strong><span>Team Leader</span><p>ML & product integration · overall coordination · demo</p></div><div class="member"><strong>Anant Choudhary</strong><span>Backend & ML</span><p>Data pipeline · model integration · technical support</p></div><div class="member"><strong>Nitin Thakur</strong><span>Frontend & UI/UX</span><p>Interface · visual experience · user flow</p></div><div class="member"><strong>Tanisha</strong><span>Research & Testing</span><p>Problem research · validation · pitch preparation</p></div></div></div></section>
+<section><div class="wrap"><div class="cta"><div><h2>Ready to test SmartCrop AI?</h2><p>Open the working MVP, load a demo scenario, and see the recommendation engine in action.</p></div><a class="btn primary" href="https://smartcrop-ai-mehymsijhbzmqprgvydguc.streamlit.app/">Launch SmartCrop AI →</a></div></div></section>
+</main><footer><div class="wrap">SmartCrop AI · Team Alpha Z · IDEAFORGE 2.0 · Benchmark-based decision-support prototype</div></footer>
 </body>
 </html>
